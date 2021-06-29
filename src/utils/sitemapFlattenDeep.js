@@ -4,7 +4,7 @@ import Bluebird from 'bluebird';
 import flattenDeep from 'lodash/flattenDeep';
 
 const isSitemap = (url) => /.*.xml$/.test(url);
-const isTarget = (url) => /.*.xml.gz$/.test(url);
+const isTarget = (url) => /^https:\/\/.*$/.test(url);
 
 const getSitemap = async (url) => {
   const { data: sitemap } = await axios.get(url);
@@ -29,6 +29,7 @@ const getSitemapElements = async (data) => {
 const sitemapFlattenDeep = async (data) => {
   const sitemapElements = await getSitemapElements(data);
   const elementsJSON = flattenDeep(sitemapElements).filter(Boolean);
+  console.log(elementsJSON);
   const elementsXML = elementsJSON.map((elem) => ({
     type: "element",
     name: "sitemap",
@@ -63,7 +64,7 @@ const sitemapFlattenDeep = async (data) => {
           'xsi:schemaLocation':
             'http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/siteindex.xsd',
         },
-        elements: resultJSON,
+        elements: elementsXML,
       },
     ],
   };
